@@ -7,13 +7,12 @@
 
 // LDC control
 char space = B00000000;
-char e_letter = B01111001;
-char dash = B01000000;
-char dot  = B10000000;
+char dash  = B01000000;
+char dot   = B10000000;
 //                  0         1         2         3         4         5         6         7         8         9         A         b         C         D         E         F
 char lcdDigits[] = {B00111111,B00000110,B01011011,B01001111,B01100110,B01101101,B01111101,B00000111,B01111111,B01101111,B00110111,B01111100,B00111001,B01011110,B01111001,B01110001};
 //                   A         b         C         d         E         F         G         H         I         J         K*NO_SUP  L         M*NO_SUP  n         o         p         q         r         S         t         u         v*NO_SUP  w*NO_SUP  x*NO_SUP  y         z
-char lcdLetters[] = {B01110111,B01111100,B00111001,B01011110,e_letter,B01110001,B01111101,B01110110,B00000110,B00011111,B00000000,B00111000,B00110111,B01010100,B01011100,B01110011,B01100111,B01010000,B01101101,B01111000,B00011100,B00111110,B00000000,B00000000,B01101110,B01011011};
+char lcdLetters[] = {B01110111,B01111100,B00111001,B01011110,B01111001,B01110001,B01111101,B01110110,B00000110,B00011111,B00000000,B00111000,B00110111,B01010100,B01011100,B01110011,B01100111,B01010000,B01101101,B01111000,B00011100,B00111110,B00000000,B00000000,B01101110,B01011011};
 
 
 Lcd::Lcd(int updateRegisterPin, int clockSerialPin, int dataSerialPin) {
@@ -122,9 +121,9 @@ void Lcd::sendDigit(int number, int numberOfDigitsToSend, char fillChar, boolean
   
   if (number / multiplier == 0 && number >= 0) {
     int shiftedNum = number;
-    for (int i=numberOfDigitsToSend - 1; i >= 0; i--) {
+    for (int i = 0; i < numberOfDigitsToSend; i++) {
       int digit = shiftedNum % 10;
-      if (shiftedNum > 0 || i == numberOfDigitsToSend - 1) {
+      if (shiftedNum > 0 || i == 0) {
         buffer[i] = '0' + digit;
       } else {
         buffer[i] = fillChar;
@@ -134,12 +133,12 @@ void Lcd::sendDigit(int number, int numberOfDigitsToSend, char fillChar, boolean
   } else if (number * 10 / multiplier == 0 && number <= 0) {
     int shiftedNum = number * -1;
     boolean sentMinusSign=false;
-    for (int i=numberOfDigitsToSend - 1; i >= 0; i--) {
+      for (int i=0; i < numberOfDigitsToSend; i++) {
       int digit = shiftedNum % 10;
-      if (shiftedNum > 0 || i == numberOfDigitsToSend - 1) {
+      if (shiftedNum > 0 || i == 0) {
         buffer[i] = '0' + digit;
       } else if (!sentMinusSign) {
-        buffer[i] = dash;
+        buffer[i] = '-';
         sentMinusSign = true;
       } else {
         buffer[i] = fillChar;
@@ -147,7 +146,7 @@ void Lcd::sendDigit(int number, int numberOfDigitsToSend, char fillChar, boolean
       shiftedNum = shiftedNum / 10;
     } 
   } else { 
-    for (int i=numberOfDigitsToSend - 1; i >=  0; i--) {
+      for (int i=0; i < numberOfDigitsToSend; i++) {
        if (i == numberOfDigitsToSend - 1) {
          buffer[i]= 'E';
        } else {
